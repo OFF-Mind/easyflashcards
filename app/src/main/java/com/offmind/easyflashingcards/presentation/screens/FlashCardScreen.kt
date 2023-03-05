@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -100,7 +101,11 @@ fun FlashCardScreen(
 @Composable
 fun NextButtonsBlock(onNegative: () -> Unit, onPositive: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-        Surface(shadowElevation = 5.dp) {
+        Surface(
+            shadowElevation = 5.dp,
+            color = Color.Transparent,
+            shape = CircleShape
+        ) {
             Box(contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .clickable {
@@ -117,10 +122,12 @@ fun NextButtonsBlock(onNegative: () -> Unit, onPositive: () -> Unit) {
                 )
             }
         }
-        Surface(shadowElevation = 5.dp) {
+        Surface(shadowElevation = 5.dp,
+            color = Color.Transparent,
+            shape = CircleShape) {
             Box(contentAlignment = Alignment.Center,
                 modifier = Modifier.clickable {
-                    onNegative.invoke()
+                    onPositive.invoke()
                 }) {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.circle_button_background),
