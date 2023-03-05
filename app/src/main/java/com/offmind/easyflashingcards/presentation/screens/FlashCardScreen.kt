@@ -100,7 +100,7 @@ fun FlashCardScreen(
 @Composable
 fun NextButtonsBlock(onNegative: () -> Unit, onPositive: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-        Surface(shadowElevation = 5.dp, b) {
+        Surface(shadowElevation = 5.dp) {
             Box(contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .clickable {
