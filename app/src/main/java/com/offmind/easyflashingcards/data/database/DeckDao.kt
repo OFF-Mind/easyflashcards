@@ -21,8 +21,11 @@ interface DeckDao {
 
     @Insert
     fun insertAll(vararg users: User)
-
 */
+
+    @Query("SELECT * FROM deck_table WHERE id == :deckId")
+    fun getDeckById(deckId: Int): DeckEntity
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(deck: DeckEntity): Long
 

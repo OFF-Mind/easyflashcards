@@ -156,8 +156,10 @@ class MainActivity : ComponentActivity() {
                     appBarSettings = appBarSettings)
             }
             composable(
-                NavigationRoutes.CardsListScreen.route,
-                arguments = listOf(navArgument("deckId") { type = NavType.IntType })
+                NavigationRoutes.CardsListScreen().route,
+                arguments = listOf(
+                    navArgument(NavigationRoutes.CardsListScreen.DECK_ID_KEY) { type = NavType.IntType },
+                    navArgument(NavigationRoutes.CardsListScreen.DECK_NAME_KEY) { type = NavType.StringType })
             ) {
                 DeckCardsScreen(
                     navController = navController,

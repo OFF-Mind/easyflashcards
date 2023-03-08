@@ -50,4 +50,9 @@ class CardsApiImpl(
             println("getCardsForDeck: $result")
             result
         }
+
+    override suspend fun getDeck(deckId: Int): DeckEntity =
+        withContext(ioDispatcher) {
+            datasource.deckDao().getDeckById(deckId)
+        }
 }

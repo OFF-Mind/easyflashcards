@@ -14,6 +14,7 @@ val LightGray = Color(0xFFCFCDC7)
 val ShadowedDarkWhite = Color(0xFFE2E2E2)
 val DarkGray = Color(0xFF5E5E5E)
 val DarkWhite = Color(0xFFEFEFEF)
+val DividerColor = Color(0xFFA0A0A0)
 
 val PositiveGreen = Color(0xFF77A06B)
 val NegativeRed = Color(0xFFBA5B5B)

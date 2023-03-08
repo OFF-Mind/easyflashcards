@@ -79,7 +79,8 @@ fun DrawScreen(
                 DecksList(
                     state.decks, false,
                     onDeckSelected = {
-                        onNavigateNext.invoke("cardsList/${it}")
+                        onNavigateNext.invoke(
+                            "cardsList/${it}/${state.decks.find { deck -> deck.id == it }!!.displayName}")
                     },
                     onNewDeckSelected = {
                         //no-op
