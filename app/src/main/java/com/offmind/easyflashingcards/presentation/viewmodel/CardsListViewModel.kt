@@ -46,7 +46,8 @@ class CardsListViewModel(
 
         _state.value = CardsListState.CardsList(
             cards = displayCards,
-            deckName = deckName
+            deckName = deckName,
+            queryString = filter
         )
     }
 
@@ -61,6 +62,6 @@ class CardsListViewModel(
         BaseViewModelState(title = title) {
         class Loading(deckName: String) : CardsListState(title = deckName)
         object Empty : CardsListState()
-        class CardsList(deckName: String, val cards: List<Card>) : CardsListState(title = deckName)
+        class CardsList(deckName: String, val cards: List<Card>, val queryString: String = "") : CardsListState(title = deckName)
     }
 }
