@@ -40,8 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.offmind.easyflashingcards.R
 import com.offmind.easyflashingcards.domain.model.Deck
-import com.offmind.easyflashingcards.presentation.AppBarSettings
+import com.offmind.easyflashingcards.presentation.ScreenSettings
 import com.offmind.easyflashingcards.presentation.viewmodel.DecksViewModel
+import com.offmind.easyflashingcards.presentation.views.DialogResult
+import com.offmind.easyflashingcards.presentation.views.TextInputDialogDialog
 import com.offmind.easyflashingcards.ui.theme.DisabledTurquoise
 import com.offmind.easyflashingcards.ui.theme.MainTurquoise
 import org.koin.androidx.compose.koinViewModel
@@ -50,12 +52,19 @@ import org.koin.androidx.compose.koinViewModel
 fun DecksScreen(
     paddingValues: PaddingValues,
     navController: NavController,
-    appBarSettings: MutableState<AppBarSettings>,
+    appBarSettings: MutableState<ScreenSettings>,
     decksViewModel: DecksViewModel = koinViewModel()
 ) {
 
     val state by decksViewModel.state.collectAsState()
-    appBarSettings.value = appBarSettings.value.copy(title = state.title, showHomeButton = true)
+    var showNewDeckDialog by remember { mutableStateOf(false)
+    }
+    appBarSettings.value = ScreenSettings(
+        title = state.title,
+        showHomeButton = true,
+        fabButtonClick = {
+            showNewDeckDialog = true
+        })
 
     DrawScreen(
         state = state,
@@ -64,7 +73,20 @@ fun DecksScreen(
         navController.navigate(route = route)
     }
 
+    if (showNewDeckDialog) {
+        TextInputDialogDialog(
+            title = "Create new deck",
+            label = "Deck name",
+            positiveButtonText = "Create"
+        ) { result, deckName ->
+            showNewDeckDialog = false
+            if (result == DialogResult.POSITIVE) {
+                decksViewModel.createNewDeck(deckName)
+            }
+        }
+    }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

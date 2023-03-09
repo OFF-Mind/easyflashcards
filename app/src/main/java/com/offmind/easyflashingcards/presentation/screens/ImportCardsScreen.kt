@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.offmind.easyflashingcards.presentation.AppBarSettings
+import com.offmind.easyflashingcards.presentation.ScreenSettings
 import com.offmind.easyflashingcards.presentation.viewmodel.ImportCardsViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -22,7 +22,7 @@ import org.koin.androidx.compose.koinViewModel
 fun ImportCardsScreen(
     paddingValues: PaddingValues,
     navController: NavController,
-    appBarSettings: MutableState<AppBarSettings>,
+    appBarSettings: MutableState<ScreenSettings>,
     decksViewModel: ImportCardsViewModel = koinViewModel()
 ) {
 

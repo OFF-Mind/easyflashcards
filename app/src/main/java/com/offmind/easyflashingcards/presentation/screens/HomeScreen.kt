@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.offmind.easyflashingcards.R
-import com.offmind.easyflashingcards.presentation.AppBarSettings
 import com.offmind.easyflashingcards.presentation.NavigationRoutes
+import com.offmind.easyflashingcards.presentation.ScreenSettings
 import com.offmind.easyflashingcards.presentation.viewmodel.HomeViewModel
 import com.offmind.easyflashingcards.presentation.views.CardButton
 import com.offmind.easyflashingcards.presentation.views.CardButtonSize
@@ -28,18 +28,18 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun DisplayHomeScreen(
     navController: NavController,
-    appBarSettings: MutableState<AppBarSettings>,
+    appBarSettings: MutableState<ScreenSettings>,
     homeViewModel: HomeViewModel = koinViewModel()
 ) {
 
     val state by homeViewModel.state.collectAsState()
-    appBarSettings.value = appBarSettings.value.copy(title = state.title, showHomeButton = false)
+    appBarSettings.value = ScreenSettings(title = state.title)
 
     when (state) {
         is HomeViewModel.HomeViewModelState.Idle -> MenuContainer {
             when (it) {
                 MenuOption.DECKS -> navController.navigate(NavigationRoutes.DecksScreenRoute.route)
-                MenuOption.START -> navController.navigate(NavigationRoutes.CardFlashScreen.route)
+                MenuOption.START -> navController.navigate(NavigationRoutes.CardFlashScreen().getParametrizedRoute())
                 else -> {}
             }
         }

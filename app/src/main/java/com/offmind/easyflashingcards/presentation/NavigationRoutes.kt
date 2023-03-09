@@ -10,5 +10,13 @@ sealed class NavigationRoutes(val route: String) {
             const val DECK_NAME_KEY = "deckName"
         }
     }
-    object CardFlashScreen: NavigationRoutes("cardFlash")
+    class CardFlashScreen(val deckId: Int = -1) : NavigationRoutes("cardFlash/{${DECK_ID_KEY}}") {
+        companion object {
+            const val DECK_ID_KEY = "deckId"
+        }
+
+        fun getParametrizedRoute(): String {
+            return "${route.split('/').first()}/$deckId"
+        }
+    }
 }

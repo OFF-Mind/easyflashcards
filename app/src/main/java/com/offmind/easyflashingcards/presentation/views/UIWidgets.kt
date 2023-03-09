@@ -16,8 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -95,7 +99,8 @@ fun SearchField(
                         text = hint,
                         modifier = Modifier.fillMaxSize(),
                         fontSize = 20.sp,
-                        color = LightGray)
+                        color = LightGray
+                    )
                 }
                 BasicTextField(
                     singleLine = true,
@@ -138,9 +143,10 @@ fun WordListItem(card: Card, highlitedText: String) {
             ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Spacer(modifier = Modifier.weight(1f))
-                    Box(modifier = Modifier
-                        .background(color = CircleButtonBackground, shape = CircleShape)
-                        .padding(5.dp)
+                    Box(
+                        modifier = Modifier
+                            .background(color = CircleButtonBackground, shape = CircleShape)
+                            .padding(5.dp)
                     ) {
                         Image(
                             imageVector = ImageVector.vectorResource(id = R.drawable.card_settings_icon),
@@ -150,7 +156,8 @@ fun WordListItem(card: Card, highlitedText: String) {
                 }
                 Text(
                     text = card.frontSide.getSpannableStringWithHighlight(highlitedText),
-                    maxLines = 3,
+                    maxLines = 2,
+                    fontSize = 18.sp,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -164,7 +171,8 @@ fun WordListItem(card: Card, highlitedText: String) {
                 Text(
                     modifier = Modifier.padding(10.dp),
                     text = card.backSide.getSpannableStringWithHighlight(highlitedText),
-                    maxLines = 3,
+                    maxLines = 2,
+                    fontSize = 18.sp,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -214,4 +222,60 @@ enum class CardButtonSize(val width: Dp, val height: Dp) {
     MEDIUM(width = 240.dp, height = 140.dp),
     WIDE(width = 380.dp, height = 140.dp)
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TextInputDialogDialog(
+    title: String,
+    label: String,
+    positiveButtonText: String = "Ok",
+    negativeButtonText: String = "Cancel",
+    onResult: (result: DialogResult, insertedText: String) -> Unit
+) {
+    var dialogName by remember {
+        mutableStateOf("")
+    }
+    AlertDialog(
+        onDismissRequest = {
+            onResult.invoke(DialogResult.NEUTRAL, "")
+        },
+        title = {
+            Text(text = title)
+        },
+        text = {
+            Column {
+                TextField(
+                    value = dialogName,
+                    textStyle = TextStyle(fontSize = 20.sp),
+                    label = { Text(text = label) },
+                    onValueChange = {
+                        dialogName = it
+                    })
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onResult.invoke(DialogResult.POSITIVE, dialogName)
+                }) {
+                Text(positiveButtonText)
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = {
+                    onResult.invoke(DialogResult.NEGATIVE, "")
+                }) {
+                Text(negativeButtonText)
+            }
+        }
+    )
+}
+
+enum class DialogResult {
+    POSITIVE,
+    NEGATIVE,
+    NEUTRAL
+}
+
 

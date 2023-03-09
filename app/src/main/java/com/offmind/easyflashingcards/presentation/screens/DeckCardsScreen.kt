@@ -25,7 +25,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.offmind.easyflashingcards.R
 import com.offmind.easyflashingcards.domain.model.Card
-import com.offmind.easyflashingcards.presentation.AppBarSettings
+import com.offmind.easyflashingcards.presentation.NavigationRoutes
+import com.offmind.easyflashingcards.presentation.ScreenSettings
 import com.offmind.easyflashingcards.presentation.viewmodel.CardsListViewModel
 import com.offmind.easyflashingcards.presentation.views.CardButton
 import com.offmind.easyflashingcards.presentation.views.CardButtonSize
@@ -37,13 +38,18 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun DeckCardsScreen(
     navController: NavController,
-    appBarSettings: MutableState<AppBarSettings>,
+    appBarSettings: MutableState<ScreenSettings>,
     paddingValues: PaddingValues,
     viewModel: CardsListViewModel = koinViewModel()
 ) {
 
     val state by viewModel.state.collectAsState()
-    appBarSettings.value = appBarSettings.value.copy(title = state.title, showHomeButton = true)
+    appBarSettings.value = ScreenSettings(
+        title = state.title,
+        showHomeButton = true,
+        fabButtonClick = {
+
+        })
 
     Box(
         modifier = Modifier
@@ -54,11 +60,24 @@ fun DeckCardsScreen(
             is CardsListViewModel.CardsListState.CardsList -> {
                 DisplayCardsList(
                     cards = (state as CardsListViewModel.CardsListState.CardsList).cards,
-                    queryString = (state as CardsListViewModel.CardsListState.CardsList).queryString)
+                    queryString = (state as CardsListViewModel.CardsListState.CardsList).queryString,
+                    onDeckAction = {
+                        when(it) {
+                            DeckAction.START -> {
+                                navController.navigate(
+                                    NavigationRoutes.CardFlashScreen(
+                                        (state as CardsListViewModel.CardsListState.CardsList).deckId
+                                    ).getParametrizedRoute()
+                                )
+                            }
+                            else -> {
+
+                            }
+                        }
+                    })
                 {
                     viewModel.filterCards(it)
                 }
-
             }
 
             else -> {}
@@ -70,6 +89,7 @@ fun DeckCardsScreen(
 fun DisplayCardsList(
     cards: List<Card>,
     queryString: String,
+    onDeckAction: (action: DeckAction) -> Unit,
     onFilterCards: (filterString: String) -> Unit
 ) {
     Column(
@@ -83,7 +103,7 @@ fun DisplayCardsList(
                 icon = R.drawable.start_icon,
                 text = "Start deck"
             ) {
-                //todo
+                onDeckAction.invoke(DeckAction.START)
             }
             CardButton(
                 size = CardButtonSize.TINY,
@@ -137,4 +157,11 @@ fun DisplayCardsList(
         }
     }
 }
+
+enum class DeckAction {
+    START,
+    STATS,
+    SETTINGS
+}
+
 

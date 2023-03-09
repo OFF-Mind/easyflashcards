@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -36,9 +39,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.offmind.easyflashingcards.domain.repository.CardsRepository
 import com.offmind.easyflashingcards.domain.usecase.ReadCardsCsvUseCase
-import com.offmind.easyflashingcards.presentation.AppBarSettings
 import com.offmind.easyflashingcards.presentation.Empty
 import com.offmind.easyflashingcards.presentation.NavigationRoutes
+import com.offmind.easyflashingcards.presentation.ScreenSettings
 import com.offmind.easyflashingcards.presentation.screens.DeckCardsScreen
 import com.offmind.easyflashingcards.presentation.screens.DecksScreen
 import com.offmind.easyflashingcards.presentation.screens.DisplayHomeScreen
@@ -83,6 +86,23 @@ class MainActivity : ComponentActivity() {
                                     }
                                 })
                         },
+                        floatingActionButton = {
+                            appBarSettings.value.fabButtonClick?.let {
+                                FloatingActionButton(
+                                    onClick = {
+                                        it.invoke()
+                                    },
+                                    shape = CircleShape,
+                                    containerColor = MainTurquoise
+                                ) {
+                                    Image(
+                                        imageVector = ImageVector.vectorResource(id = R.drawable.plus_icon),
+                                        contentDescription = ""
+                                    )
+                                }
+                            }
+                        },
+                        floatingActionButtonPosition = FabPosition.End,
                         content = { paddingValues ->
                             Box(modifier = Modifier.fillMaxSize()) {
                                 NavigationComponent(
@@ -133,7 +153,7 @@ class MainActivity : ComponentActivity() {
     fun NavigationComponent(
         navController: NavHostController,
         paddingValues: PaddingValues,
-        appBarSettings: MutableState<AppBarSettings>
+        appBarSettings: MutableState<ScreenSettings>
     ) {
         NavHost(navController = navController, startDestination = "home") {
             composable(NavigationRoutes.HomeScreenRoute.route) {
@@ -168,7 +188,12 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(
-                NavigationRoutes.CardFlashScreen.route
+                NavigationRoutes.CardFlashScreen().route,
+                arguments = listOf(
+                    navArgument(NavigationRoutes.CardFlashScreen.DECK_ID_KEY) {
+                        type = NavType.IntType
+                    },
+                )
             ) {
                 FlashCardScreen(
                     paddingValues = paddingValues,

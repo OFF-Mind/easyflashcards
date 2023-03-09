@@ -27,13 +27,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.offmind.easyflashingcards.R
-import com.offmind.easyflashingcards.presentation.AppBarSettings
+import com.offmind.easyflashingcards.presentation.ScreenSettings
 import com.offmind.easyflashingcards.presentation.viewmodel.CardFlashViewModel
 import com.offmind.easyflashingcards.ui.theme.DarkWhite
+import com.offmind.easyflashingcards.ui.theme.DividerColor
 import com.offmind.easyflashingcards.ui.theme.NegativeRed
 import com.offmind.easyflashingcards.ui.theme.PositiveGreen
 import com.offmind.easyflashingcards.ui.theme.ShadowedDarkWhite
@@ -43,12 +45,12 @@ import org.koin.androidx.compose.koinViewModel
 fun FlashCardScreen(
     paddingValues: PaddingValues,
     navController: NavController,
-    appBarSettings: MutableState<AppBarSettings>,
+    appBarSettings: MutableState<ScreenSettings>,
     viewModel: CardFlashViewModel = koinViewModel()
 ) {
 
     val state by viewModel.state.collectAsState()
-    appBarSettings.value = appBarSettings.value.copy(
+    appBarSettings.value = ScreenSettings(
         title = state.title,
         showHomeButton = true
     )
@@ -91,10 +93,26 @@ fun FlashCardScreen(
                 }
             }
 
+            CardFlashViewModel.CardFlashState.NoMoreWords -> {
+                DrawNoMoreWords()
+            }
+
             CardFlashViewModel.CardFlashState.Loading -> {
 
             }
         }
+    }
+}
+
+@Composable
+fun DrawNoMoreWords() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = "Oops, no cards to display",
+            textAlign = TextAlign.Center,
+            color = DividerColor,
+            fontSize = 20.sp
+        )
     }
 }
 
@@ -122,9 +140,11 @@ fun NextButtonsBlock(onNegative: () -> Unit, onPositive: () -> Unit) {
                 )
             }
         }
-        Surface(shadowElevation = 5.dp,
+        Surface(
+            shadowElevation = 5.dp,
             color = Color.Transparent,
-            shape = CircleShape) {
+            shape = CircleShape
+        ) {
             Box(contentAlignment = Alignment.Center,
                 modifier = Modifier.clickable {
                     onPositive.invoke()
