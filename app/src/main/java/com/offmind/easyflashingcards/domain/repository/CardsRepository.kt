@@ -4,6 +4,7 @@ import com.offmind.easyflashingcards.data.datasource.entity.CardEntity
 import com.offmind.easyflashingcards.data.datasource.entity.DeckEntity
 import com.offmind.easyflashingcards.domain.model.Card
 import com.offmind.easyflashingcards.domain.model.Deck
+import kotlinx.coroutines.flow.Flow
 
 interface CardsRepository {
 
@@ -17,7 +18,13 @@ interface CardsRepository {
 
     suspend fun getDeck(deckId: Int): DeckEntity
 
+    suspend fun getCard(cardId: Int): CardEntity
+
     suspend fun writeCards(cards: List<CardEntity>)
 
+    suspend fun createNewCard(deckId: Int): Int
+
     suspend fun clearTempDeck()
+
+    suspend fun obtainCardsFlow(deckId: Int): Flow<List<CardEntity>>
 }

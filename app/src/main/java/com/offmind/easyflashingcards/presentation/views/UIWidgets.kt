@@ -45,8 +45,8 @@ import com.offmind.easyflashingcards.R
 import com.offmind.easyflashingcards.domain.model.Card
 import com.offmind.easyflashingcards.ui.theme.CircleButtonBackground
 import com.offmind.easyflashingcards.ui.theme.DarkWhite
+import com.offmind.easyflashingcards.ui.theme.HighlightedColor
 import com.offmind.easyflashingcards.ui.theme.LightGray
-import com.offmind.easyflashingcards.ui.theme.PositiveGreen
 
 @Composable
 fun CardButton(
@@ -122,7 +122,7 @@ fun SearchField(
 }
 
 @Composable
-fun WordListItem(card: Card, highlitedText: String) {
+fun WordListItem(card: Card, highlitedText: String, onClick: (Card) -> Unit) {
     Surface(
         shadowElevation = 5.dp,
         shape = RoundedCornerShape(5.dp),
@@ -147,6 +147,7 @@ fun WordListItem(card: Card, highlitedText: String) {
                         modifier = Modifier
                             .background(color = CircleButtonBackground, shape = CircleShape)
                             .padding(5.dp)
+                            .clickable { onClick.invoke(card) }
                     ) {
                         Image(
                             imageVector = ImageVector.vectorResource(id = R.drawable.card_settings_icon),
@@ -180,7 +181,10 @@ fun WordListItem(card: Card, highlitedText: String) {
     }
 }
 
-fun String.getSpannableStringWithHighlight(highlightedText: String): AnnotatedString =
+fun String.getSpannableStringWithHighlight(
+    highlightedText: String,
+    spanStyle: SpanStyle = SpanStyle(background = HighlightedColor)
+): AnnotatedString =
     buildAnnotatedString {
         val text = this@getSpannableStringWithHighlight
         val matchedResults = "(?i)${highlightedText}".toRegex().findAll(text)
@@ -197,7 +201,7 @@ fun String.getSpannableStringWithHighlight(highlightedText: String): AnnotatedSt
                         )
                     )
                 )
-                withStyle(style = SpanStyle(background = PositiveGreen)) {
+                withStyle(style = spanStyle) {
                     append(text.substring(match.range))
                 }
                 startIndex = match.range.last + 1

@@ -23,6 +23,12 @@ interface CardDao {
     fun insertAll(vararg users: User)
 */
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertCard(card: CardEntity): Long
+
+    @Query("SELECT * FROM card_table WHERE id == :cardId")
+    fun getCardById(cardId: Int): CardEntity
+
     @Query("SELECT * FROM card_table WHERE deck_id == :deckId")
     fun loadCardsInDeck(deckId: Int): List<CardEntity>
 

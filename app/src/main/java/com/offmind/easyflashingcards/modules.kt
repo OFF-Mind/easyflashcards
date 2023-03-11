@@ -9,6 +9,7 @@ import com.offmind.easyflashingcards.presentation.viewmodel.CardsListViewModel
 import com.offmind.easyflashingcards.presentation.viewmodel.DecksViewModel
 import com.offmind.easyflashingcards.presentation.viewmodel.HomeViewModel
 import com.offmind.easyflashingcards.presentation.viewmodel.ImportCardsViewModel
+import com.offmind.easyflashingcards.presentation.viewmodel.CardViewModel
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -26,4 +27,5 @@ val appModules = module {
     viewModelOf(::ImportCardsViewModel)
     viewModelOf(::CardsListViewModel)
     viewModelOf(::CardFlashViewModel)
+    viewModelOf(::CardViewModel)
 }

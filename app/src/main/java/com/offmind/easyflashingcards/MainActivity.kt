@@ -9,7 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -21,8 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -31,22 +28,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.offmind.easyflashingcards.domain.repository.CardsRepository
 import com.offmind.easyflashingcards.domain.usecase.ReadCardsCsvUseCase
 import com.offmind.easyflashingcards.presentation.Empty
-import com.offmind.easyflashingcards.presentation.NavigationRoutes
-import com.offmind.easyflashingcards.presentation.ScreenSettings
-import com.offmind.easyflashingcards.presentation.screens.DeckCardsScreen
-import com.offmind.easyflashingcards.presentation.screens.DecksScreen
-import com.offmind.easyflashingcards.presentation.screens.DisplayHomeScreen
-import com.offmind.easyflashingcards.presentation.screens.FlashCardScreen
-import com.offmind.easyflashingcards.presentation.screens.ImportCardsScreen
+import com.offmind.easyflashingcards.presentation.NavigationComponent
 import com.offmind.easyflashingcards.ui.theme.EasyFlashingCardsTheme
 import com.offmind.easyflashingcards.ui.theme.MainTurquoise
 import kotlinx.coroutines.launch
@@ -146,61 +132,6 @@ class MainActivity : ComponentActivity() {
 
         else -> {
             null
-        }
-    }
-
-    @Composable
-    fun NavigationComponent(
-        navController: NavHostController,
-        paddingValues: PaddingValues,
-        appBarSettings: MutableState<ScreenSettings>
-    ) {
-        NavHost(navController = navController, startDestination = "home") {
-            composable(NavigationRoutes.HomeScreenRoute.route) {
-                DisplayHomeScreen(
-                    navController = navController,
-                    appBarSettings = appBarSettings
-                )
-            }
-            composable(NavigationRoutes.DecksScreenRoute.route) {
-                DecksScreen(
-                    paddingValues = paddingValues,
-                    navController = navController,
-                    appBarSettings = appBarSettings
-                )
-            }
-            composable(NavigationRoutes.ImportDecksScreenRoute.route) {
-                ImportCardsScreen(
-                    paddingValues = paddingValues,
-                    navController = navController,
-                    appBarSettings = appBarSettings)
-            }
-            composable(
-                NavigationRoutes.CardsListScreen().route,
-                arguments = listOf(
-                    navArgument(NavigationRoutes.CardsListScreen.DECK_ID_KEY) { type = NavType.IntType },
-                    navArgument(NavigationRoutes.CardsListScreen.DECK_NAME_KEY) { type = NavType.StringType })
-            ) {
-                DeckCardsScreen(
-                    navController = navController,
-                    appBarSettings = appBarSettings,
-                    paddingValues = paddingValues
-                )
-            }
-            composable(
-                NavigationRoutes.CardFlashScreen().route,
-                arguments = listOf(
-                    navArgument(NavigationRoutes.CardFlashScreen.DECK_ID_KEY) {
-                        type = NavType.IntType
-                    },
-                )
-            ) {
-                FlashCardScreen(
-                    paddingValues = paddingValues,
-                    appBarSettings = appBarSettings,
-                    navController = navController
-                )
-            }
         }
     }
 }

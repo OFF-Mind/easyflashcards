@@ -19,6 +19,7 @@ val CircleButtonBackground = Color(0xFFE0E0E0)
 
 val PositiveGreen = Color(0xFF77A06B)
 val NegativeRed = Color(0xFFBA5B5B)
+val HighlightedColor = Color(0xFFC3C687)
 
 val MainTurquoise = Color(0xFF75A09E)
 val DisabledTurquoise = Color(0x2275A09E)

@@ -9,6 +9,8 @@ import com.offmind.easyflashingcards.domain.repository.CardsRepository
 import com.offmind.easyflashingcards.presentation.NavigationRoutes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -23,7 +25,7 @@ class CardsListViewModel(
         checkNotNull(savedStateHandle[NavigationRoutes.CardsListScreen.DECK_ID_KEY])
 
     private val _state: MutableStateFlow<CardsListState> =
-        MutableStateFlow(CardsListState.Loading(deckName = deckName))
+        MutableStateFlow(CardsListState.Loading(deckName = deckName, deckId = deckId))
     val state: StateFlow<CardsListState> = _state
 
     private var allDeckCards: List<CardEntity> = emptyList()
@@ -52,17 +54,24 @@ class CardsListViewModel(
         )
     }
 
-    fun fetchCards(deckId: Int) {
+    private fun fetchCards(deckId: Int) {
         viewModelScope.launch {
-            allDeckCards = cardsRepository.getCardsForDeck(deckId)
-            filterCards("")
+            cardsRepository.obtainCardsFlow(deckId).onEach {
+                allDeckCards = it
+                filterCards("")
+            }.collect()
         }
     }
 
-    sealed class CardsListState(override val title: String = "") :
+    sealed class CardsListState(val deckId: Int, override val title: String = "") :
         BaseViewModelState(title = title) {
-        class Loading(deckName: String) : CardsListState(title = deckName)
-        object Empty : CardsListState()
-        class CardsList(val deckId: Int, deckName: String, val cards: List<Card>, val queryString: String = "") : CardsListState(title = deckName)
+        class Loading(deckName: String, deckId: Int) : CardsListState(title = deckName, deckId = deckId)
+        object Empty : CardsListState(deckId = -1)
+        class CardsList(
+            deckId: Int,
+            deckName: String,
+            val cards: List<Card>,
+            val queryString: String = ""
+        ) : CardsListState(title = deckName, deckId = deckId)
     }
 }

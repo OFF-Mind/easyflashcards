@@ -48,7 +48,9 @@ fun DeckCardsScreen(
         title = state.title,
         showHomeButton = true,
         fabButtonClick = {
-
+            navController.navigate(
+                NavigationRoutes.CardScreen(deckId = state.deckId).getParametrizedRoute()
+            )
         })
 
     Box(
@@ -62,7 +64,7 @@ fun DeckCardsScreen(
                     cards = (state as CardsListViewModel.CardsListState.CardsList).cards,
                     queryString = (state as CardsListViewModel.CardsListState.CardsList).queryString,
                     onDeckAction = {
-                        when(it) {
+                        when (it) {
                             DeckAction.START -> {
                                 navController.navigate(
                                     NavigationRoutes.CardFlashScreen(
@@ -70,10 +72,19 @@ fun DeckCardsScreen(
                                     ).getParametrizedRoute()
                                 )
                             }
+
                             else -> {
 
                             }
                         }
+                    },
+                    onCardSelected = {
+                        navController.navigate(
+                            NavigationRoutes.CardScreen(
+                                cardId = it,
+                                deckId = state.deckId
+                            ).getParametrizedRoute()
+                        )
                     })
                 {
                     viewModel.filterCards(it)
@@ -90,6 +101,7 @@ fun DisplayCardsList(
     cards: List<Card>,
     queryString: String,
     onDeckAction: (action: DeckAction) -> Unit,
+    onCardSelected: (cardid: Int) -> Unit,
     onFilterCards: (filterString: String) -> Unit
 ) {
     Column(
@@ -97,7 +109,8 @@ fun DisplayCardsList(
             .fillMaxSize()
             .padding(top = 10.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly) {
             CardButton(
                 size = CardButtonSize.TINY,
                 icon = R.drawable.start_icon,
@@ -130,7 +143,7 @@ fun DisplayCardsList(
 
         SearchField(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(horizontal = 10.dp)
                 .height(50.dp),
             hint = "Search cards"
         ) { newSearchQuery ->
@@ -147,10 +160,14 @@ fun DisplayCardsList(
                 )
             }
         } else {
-            LazyColumn(content = {
+            LazyColumn(
+                modifier = Modifier.padding(top = 10.dp),
+                content = {
                 cards.forEach {
                     item {
-                        WordListItem(card = it, highlitedText = queryString)
+                        WordListItem(card = it, highlitedText = queryString) {
+                            onCardSelected(it.id)
+                        }
                     }
                 }
             })
