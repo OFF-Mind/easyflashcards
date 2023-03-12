@@ -67,7 +67,24 @@ class MainActivity : ComponentActivity() {
                                             modifier = Modifier
                                                 .padding(horizontal = 10.dp)
                                                 .clickable {
-                                                    navController.popBackStack()
+                                                    if (appBarSettings.value.homeButtonAction != null) {
+                                                        appBarSettings.value.homeButtonAction?.invoke()
+                                                    } else {
+                                                        navController.popBackStack()
+                                                    }
+                                                })
+                                    }
+                                },
+                                actions = {
+                                    appBarSettings.value.actions.forEach {
+                                        Image(
+                                            imageVector = ImageVector.vectorResource(id = it.icon),
+                                            contentDescription = "",
+                                            colorFilter = ColorFilter.tint(MainTurquoise),
+                                            modifier = Modifier
+                                                .padding(horizontal = 10.dp)
+                                                .clickable {
+                                                    it.action.invoke()
                                                 })
                                     }
                                 })

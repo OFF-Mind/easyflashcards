@@ -3,6 +3,7 @@ package com.offmind.easyflashingcards.presentation.views
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -43,8 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.offmind.easyflashingcards.R
 import com.offmind.easyflashingcards.domain.model.Card
+import com.offmind.easyflashingcards.ui.theme.CardCornerRadiusBig
+import com.offmind.easyflashingcards.ui.theme.CardCornerRadiusMedium
 import com.offmind.easyflashingcards.ui.theme.CircleButtonBackground
 import com.offmind.easyflashingcards.ui.theme.DarkWhite
+import com.offmind.easyflashingcards.ui.theme.DividerColor
 import com.offmind.easyflashingcards.ui.theme.HighlightedColor
 import com.offmind.easyflashingcards.ui.theme.LightGray
 
@@ -56,7 +62,7 @@ fun CardButton(
     onSelect: () -> Unit
 ) {
     val iconSize = if (size == CardButtonSize.TINY) 40.dp else 70.dp
-    Surface(shadowElevation = 7.dp, shape = RoundedCornerShape(4.dp)) {
+    Surface(shadowElevation = 7.dp, shape = RoundedCornerShape(CardCornerRadiusMedium)) {
         Column(modifier = Modifier
             .width(size.width)
             .height(size.height)
@@ -85,7 +91,7 @@ fun SearchField(
     var fieldValue by remember { mutableStateOf("") }
     Surface(
         shadowElevation = 7.dp,
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(CardCornerRadiusBig),
         modifier = modifier
     ) {
         Row(
@@ -122,10 +128,26 @@ fun SearchField(
 }
 
 @Composable
+fun VerticalDivider(
+    paddingTop: Dp = 20.dp,
+    paddingBottom: Dp = 20.dp
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.height(paddingTop))
+        Divider(
+            color = DividerColor,
+            thickness = 0.5.dp,
+            modifier = Modifier.padding(horizontal = 50.dp)
+        )
+        Spacer(modifier = Modifier.height(paddingBottom))
+    }
+}
+
+@Composable
 fun WordListItem(card: Card, highlitedText: String, onClick: (Card) -> Unit) {
     Surface(
-        shadowElevation = 5.dp,
-        shape = RoundedCornerShape(5.dp),
+        shadowElevation = 7.dp,
+        shape = RoundedCornerShape(CardCornerRadiusBig),
         modifier = Modifier
             .padding(10.dp)
 
@@ -142,7 +164,13 @@ fun WordListItem(card: Card, highlitedText: String, onClick: (Card) -> Unit) {
                     .padding(10.dp)
             ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = card.frontSide.getSpannableStringWithHighlight(highlitedText),
+                        maxLines = 2,
+                        fontSize = 18.sp,
+                        overflow = TextOverflow.Ellipsis
+                    )
                     Box(
                         modifier = Modifier
                             .background(color = CircleButtonBackground, shape = CircleShape)
@@ -155,18 +183,11 @@ fun WordListItem(card: Card, highlitedText: String, onClick: (Card) -> Unit) {
                         )
                     }
                 }
-                Text(
-                    text = card.frontSide.getSpannableStringWithHighlight(highlitedText),
-                    maxLines = 2,
-                    fontSize = 18.sp,
-                    overflow = TextOverflow.Ellipsis
-                )
             }
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-
                     .background(Color.LightGray),
             ) {
                 Text(
@@ -269,6 +290,74 @@ fun TextInputDialogDialog(
             Button(
                 onClick = {
                     onResult.invoke(DialogResult.NEGATIVE, "")
+                }) {
+                Text(negativeButtonText)
+            }
+        }
+    )
+}
+
+@Composable
+fun RadioGroup(
+    items: List<String>,
+    selected: String,
+    setSelected: (selected: String) -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        items.forEach { item ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = selected == item,
+                    onClick = {
+                        setSelected(item)
+                    },
+                    enabled = true
+                )
+                Text(text = item, modifier = Modifier
+                    .padding(start = 8.dp)
+                    .clickable {
+                        setSelected(item)
+                    })
+            }
+        }
+    }
+}
+
+@Composable
+fun TwoButtonDialog(
+    title: String,
+    label: String,
+    positiveButtonText: String = "Ok",
+    negativeButtonText: String = "Cancel",
+    onResult: (result: DialogResult) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = {
+            onResult.invoke(DialogResult.NEUTRAL)
+        },
+        title = {
+            Text(text = title)
+        },
+        text = {
+            Text(text = label)
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onResult.invoke(DialogResult.POSITIVE)
+                }) {
+                Text(positiveButtonText)
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = {
+                    onResult.invoke(DialogResult.NEGATIVE)
                 }) {
                 Text(negativeButtonText)
             }

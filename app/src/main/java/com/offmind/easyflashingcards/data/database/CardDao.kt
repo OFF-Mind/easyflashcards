@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.offmind.easyflashingcards.data.datasource.entity.CardEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CardDao {
@@ -32,6 +33,9 @@ interface CardDao {
     @Query("SELECT * FROM card_table WHERE deck_id == :deckId")
     fun loadCardsInDeck(deckId: Int): List<CardEntity>
 
+    @Query("SELECT * FROM card_table WHERE deck_id == :deckId")
+    fun loadCardsInDeckAsFlow(deckId: Int): Flow<List<CardEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTempImportCards(cards: List<CardEntity>)
 
@@ -39,5 +43,5 @@ interface CardDao {
     fun deleteTempCards()
 
     @Delete
-    fun delete(user: CardEntity)
+    fun delete(card: CardEntity)
 }

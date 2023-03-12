@@ -22,9 +22,13 @@ interface CardsRepository {
 
     suspend fun writeCards(cards: List<CardEntity>)
 
+    suspend fun saveCard(card: Card): Int
+
     suspend fun createNewCard(deckId: Int): Int
 
     suspend fun clearTempDeck()
 
-    suspend fun obtainCardsFlow(deckId: Int): Flow<List<CardEntity>>
+    suspend fun deleteCard(cardId: Int)
+
+    fun obtainCardsFlow(deckId: Int): Flow<List<CardEntity>>
 }

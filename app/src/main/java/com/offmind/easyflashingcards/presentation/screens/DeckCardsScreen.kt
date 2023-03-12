@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -31,6 +29,7 @@ import com.offmind.easyflashingcards.presentation.viewmodel.CardsListViewModel
 import com.offmind.easyflashingcards.presentation.views.CardButton
 import com.offmind.easyflashingcards.presentation.views.CardButtonSize
 import com.offmind.easyflashingcards.presentation.views.SearchField
+import com.offmind.easyflashingcards.presentation.views.VerticalDivider
 import com.offmind.easyflashingcards.presentation.views.WordListItem
 import com.offmind.easyflashingcards.ui.theme.DividerColor
 import org.koin.androidx.compose.koinViewModel
@@ -133,14 +132,7 @@ fun DisplayCardsList(
                 //todo
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Divider(
-            color = DividerColor,
-            thickness = 0.5.dp,
-            modifier = Modifier.padding(horizontal = 50.dp)
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-
+        VerticalDivider()
         SearchField(
             modifier = Modifier
                 .padding(horizontal = 10.dp)

@@ -9,16 +9,12 @@ import com.offmind.easyflashingcards.domain.model.Deck
 import com.offmind.easyflashingcards.domain.repository.CardsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 class CardsApiImpl(
     private val datasource: CardDataSource,
     private val ioDispatcher: CoroutineDispatcher
 ) : CardsRepository {
-
-    private val updateDataSourceFlow: MutableStateFlow<Int> = MutableStateFlow(0)
 
     override suspend fun getAllCards(): List<Card> =
         withContext(ioDispatcher) {
@@ -49,6 +45,20 @@ class CardsApiImpl(
             datasource.cardDao().deleteTempCards()
         }
 
+    override suspend fun saveCard(card: Card) =
+        withContext(ioDispatcher) {
+            datasource.cardDao().insertCard(
+                CardEntity(
+                    id = card.id,
+                    frontSide = card.frontSide,
+                    backSide = card.backSide,
+                    deckId = card.deckId,
+                    contentType = card.contentType.value,
+                    enabled = if (card.enabled) 1 else 0
+                )
+            ).toInt()
+        }
+
     override suspend fun getCardsForDeck(deckId: Int): List<CardEntity> =
         withContext(ioDispatcher) {
             val result = datasource.cardDao().loadCardsInDeck(deckId)
@@ -74,19 +84,16 @@ class CardsApiImpl(
                     datasource.cardDao().getCardById(result)
                 }"
             )
-            updateDataSourceFlow.emit(updateDataSourceFlow.value + 1)
             return@withContext result
         }
 
-    override suspend fun obtainCardsFlow(deckId: Int): Flow<List<CardEntity>> =
+    override suspend fun deleteCard(cardId: Int) {
         withContext(ioDispatcher) {
-            return@withContext flow {
-                this@flow.emit(getCardsForDeck(deckId))
-                updateDataSourceFlow.collect {
-                    val cards = getCardsForDeck(deckId)
-                    this@flow.emit(cards)
-                }
-            }
+            datasource.cardDao().delete(datasource.cardDao().getCardById(cardId))
         }
+    }
+
+    override fun obtainCardsFlow(deckId: Int): Flow<List<CardEntity>> =
+        datasource.cardDao().loadCardsInDeckAsFlow(deckId)
 
 }
